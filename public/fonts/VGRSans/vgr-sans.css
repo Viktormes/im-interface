@@ -1,0 +1,29 @@
+@font-face {
+    font-family: 'VGRSans';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: block;
+    src: url(WOFF2/VGRSans-Regular.woff2) format('woff2'),
+    url(WOFF/VGRSans-Regular.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'VGRSans';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: block;
+    src: url(WOFF2/VGRSans-Medium.woff2) format('woff2'),
+    url(WOFF/VGRSans-Medium.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'VGRSans';
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: 100%;
+    font-display: block;
+    src: url(WOFF2/VGRSans-Bold.woff2) format('woff2'),
+    url(WOFF/VGRSans-Bold.woff) format('woff');
+}
