@@ -4,8 +4,8 @@ metadata:
   name: im-interface-ingress
   namespace: im-interface
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/server-alias: "senslab.vgregion.se"
+    dns-managed-by/infoblox-dns-webhook: "true"
 spec:
   rules:
     - host: senslab-test.k8s.vgregion.se
