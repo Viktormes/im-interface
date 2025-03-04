@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: im-interface
+        image: harbor.vgregion.se/senslab/im-interface:latest
         container_name: im-interface
         restart: unless-stopped
         working_dir: /var/www
@@ -20,7 +20,7 @@ services:
         ports:
             - "9000:9000"
     db:
-        image: mysql:8.0
+        image: harbor.vgregion.se/senslab/mysql:8.0
         container_name: mysql-db
         restart: unless-stopped
         environment:
@@ -35,7 +35,7 @@ services:
             - app-network
 
     nginx:
-        image: nginx:latest
+        image: harbor.vgregion.se/senslab/nginx:latest
         container_name: nginx
         restart: unless-stopped
         ports:
@@ -44,7 +44,7 @@ services:
             - ./nginx.conf:/etc/nginx/nginx.conf
             - .:/var/www
         depends_on:
-                - app
+            - app
         networks:
             - app-network
 

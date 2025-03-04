@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: im-interface-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/server-alias: "senslab.vgregion.se"
+spec:
+  rules:
+    - host: senslab-test.k8s.vgregion.se
+      http:
+        paths:
+          - path: /im-interface
+            pathType: Prefix
+            backend:
+              service:
+                name: im-interface
+                port:
+                  number: 80
