@@ -13,6 +13,8 @@ spec:
       labels:
         app: im-interface
     spec:
+      imagePullSecrets:
+        - name: harbor
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
