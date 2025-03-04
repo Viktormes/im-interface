@@ -23,17 +23,6 @@ spec:
           env:
             - name: DB_HOST
               value: mysql-db
-        - name: mysql-db
-          image: harbor.vgregion.se/senslab/mysql:8.0
-          env:
-            - name: MYSQL_DATABASE
-              value: iim_interface
-            - name: MYSQL_USER
-              value: user
-            - name: MYSQL_PASSWORD
-              value: password
-            - name: MYSQL_ROOT_PASSWORD
-              value: root_password
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:

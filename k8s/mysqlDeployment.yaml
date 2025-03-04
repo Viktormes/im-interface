@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db-deployment
+  namespace: im-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      imagePullSecrets:
+        - name: harbor
+      containers:
+        - name: mysql-db
+          image: harbor.vgregion.se/senslab/mysql:8.0
+          env:
+            - name: MYSQL_DATABASE
+              value: iim_interface
+            - name: MYSQL_USER
+              value: user
+            - name: MYSQL_PASSWORD
+              value: password
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password
+          ports:
+            - containerPort: 3306
