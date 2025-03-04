@@ -33,7 +33,7 @@ class PatientListQuery
 
     private function getPatientsWithConditions(): array
     {
-        $patientsResponse = Http::get(url('/api/fhir/Patient?_revinclude=Condition:subject'));
+        $patientsResponse = Http::get(env('APP_URL') . '/api/fhir/Patient?_revinclude=Condition:subject');
         $grouped = collect($patientsResponse->json('entry'))->pluck('resource')->groupBy('resourceType');
 
         $keyedConditions = [];
@@ -49,7 +49,7 @@ class PatientListQuery
 
     private function getObservations($patients): array
     {
-        $observationsResponse = Http::post(url('/api/fhir/'), [
+        $observationsResponse = Http::post(env('APP_URL') . '/api/fhir/', [
             'resourceType' => 'Bundle',
             'type' => 'batch',
             'entry' => $patients->pluck('id')->map(function ($pid) {

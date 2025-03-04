@@ -22,7 +22,7 @@ class PatientReportedOutcomesQuery
         $system = System::Loinc;
         $loincCode = LoincCode::PatientReportedOutcomeMeasureScore;
 
-        $observations = Http::get(url("/api/fhir/Observation?code=$system|&code=$loincCode&patient=$patientId&_sort=lastUpdated&date=ge$f&date=le$t&_elements=code,effective,value"));
+        $observations = Http::get(env('APP_URL') . "/api/fhir/Observation?code=$system|&code=$loincCode&patient=$patientId&_sort=lastUpdated&date=ge$f&date=le$t&_elements=code,effective,value");
 
         if (is_null($total = $observations->json('total')) || $total <= 0) {
             return [];
