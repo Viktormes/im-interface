@@ -19,4 +19,10 @@ spec:
                 name: im-interface-service
                 port:
                   number: 80
-
+          - path: /im-interface/*
+            pathType: Prefix
+            backend:
+              service:
+                name: im-interface-service
+                port:
+                  number: 80
