@@ -15,6 +15,10 @@ spec:
     spec:
       imagePullSecrets:
         - name: harbor
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
@@ -23,7 +27,17 @@ spec:
           env:
             - name: DB_HOST
               value: mysql-db
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
             - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
