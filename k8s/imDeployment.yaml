@@ -28,16 +28,13 @@ spec:
               php artisan db:seed --force
           env:
             - name: DB_HOST
-              value: mysql-db  # Ensure it points to the correct MySQL service
+              value: mysql-db  # Ensure it points to the right MySQL service
             - name: DB_DATABASE
               value: iim_interface
             - name: DB_USERNAME
               value: user
             - name: DB_PASSWORD
               value: password
-          volumeMounts:
-            - name: app-data
-              mountPath: /var/www  # Ensure it's the right location for your app code
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
@@ -45,20 +42,14 @@ spec:
             - containerPort: 9000
           env:
             - name: DB_HOST
-              value: mysql-db  # Ensure it points to the correct MySQL service
+              value: mysql-db  # Ensure it points to the right MySQL service
             - name: DB_DATABASE
               value: iim_interface
             - name: DB_USERNAME
               value: user
             - name: DB_PASSWORD
               value: password
-          volumeMounts:
-            - name: app-data
-              mountPath: /var/www  # Ensure it's the right location for your app code
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
             - containerPort: 80
-      volumes:
-        - name: app-data
-          emptyDir: {}  # Temporary storage. You can replace this with persistent storage if needed.
