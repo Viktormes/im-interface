@@ -23,21 +23,7 @@ spec:
           env:
             - name: DB_HOST
               value: mysql-db
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
             - containerPort: 80
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
