@@ -4,7 +4,7 @@ metadata:
   name: im-interface-ingress
   namespace: im-interface
   annotations:
-    nginx.ingress.kubernetes.io/server-alias: /
+    nginx.ingress.kubernetes.io/rewrite-target: /
     dns-managed-by/infoblox-dns-webhook: "true"
 spec:
   ingressClassName: nginx
