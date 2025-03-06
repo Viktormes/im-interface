@@ -17,4 +17,4 @@ spec:
               service:
                 name: im-interface-service
                 port:
-                  number: 80
+                  number: 9000
