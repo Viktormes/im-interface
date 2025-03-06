@@ -1,87 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: im-interface-deployment
+  name: mysql-db-deployment
   namespace: im-interface
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: im-interface
+      app: mysql-db
   template:
     metadata:
       labels:
-        app: im-interface
+        app: mysql-db
     spec:
       imagePullSecrets:
         - name: harbor
       containers:
-        - name: im-interface
-          image: harbor.vgregion.se/senslab/im-interface:latest
-          command:
-            - sh
-            - -c
-            - |
-              git config --global --add safe.directory /var/www || exit 1;
-              mkdir -p /etc/nginx || exit 1;
-              chown -R www-data:www-data /var/www || exit 1;
-              echo 'worker_processes 1;
-              events {
-                  worker_connections 1024;
-              }
-              http {
-                  include       mime.types;
-                  default_type  application/octet-stream;
-                  server {
-                      listen 80;
-                      server_name senslab-test.k8s.vgregion.se;
-                      location /im-interface/ {
-                          root        /var/www/public;
-                          index       index.html;
-                          try_files   $uri $uri/ /index.html;
-                      }
-                      location /css/ {
-                          alias /var/www/resources/css/;
-                          try_files $uri $uri/ =404;
-                      }
-                      location /js/ {
-                          alias /var/www/resources/js/;
-                          try_files $uri $uri/ =404;
-                      }
-                      location /media/ {
-                          alias /var/www/resources/media/;
-                          try_files $uri $uri/ =404;
-                      }
-                      location ~ ^/im-interface/.*\.php$ {
-                         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                         fastcgi_pass 127.0.0.1:9000;
-                         fastcgi_index index.php;
-                         include fastcgi_params;
-                         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                         fastcgi_param PATH_INFO $fastcgi_path_info;
-                     }
-                      error_page 500 502 503 504 /50x.html;
-                      location = /50x.html {
-                          root /usr/share/nginx/html;
-                      }
-                      client_max_body_size 100M;
-                  }
-              }' > /etc/nginx/nginx.conf || exit 1;
-              composer update || exit 1;
-              php artisan key:generate --force || exit 1;
-              php artisan migrate --force || exit 1;
-              php artisan db:seed --force || exit 1;
-              php-fpm || exit 1;
-              nginx -g 'daemon off;' || exit 1;
+        - name: mysql-db
+          image: harbor.vgregion.se/senslab/mysql:8.0
           env:
-            - name: DB_HOST
-              value: mysql-db
-            - name: DB_DATABASE
+            - name: MYSQL_DATABASE
               value: iim_interface
-            - name: DB_USERNAME
+            - name: MYSQL_USER
               value: user
-            - name: DB_PASSWORD
+            - name: MYSQL_PASSWORD
               value: password
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password
           ports:
-            - containerPort: 9000
-            - containerPort: 80
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+      volumes:
+        - name: mysql-init-scripts
+
