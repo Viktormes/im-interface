@@ -15,17 +15,60 @@ spec:
     spec:
       imagePullSecrets:
         - name: harbor
-      initContainers:
-        - name: init-setup
+      containers:
+        - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
           command:
             - sh
             - -c
             - |
-              composer update
-              php artisan key:generate --force
-              php artisan migrate --force
-              php artisan db:seed --force
+              echo 'worker_processes 1;
+              events {
+                  worker_connections 1024;
+              }
+              http {
+                  include       mime.types;
+                  default_type  application/octet-stream;
+                  server {
+                      listen 80;
+                      server_name senslab-test.k8s.vgregion.se;
+                      location /im-interface/ {
+                          root        /var/www/public;
+                          index       index.html;
+                          try_files   $uri $uri/ /index.html;
+                      }
+                      location /css/ {
+                          alias /var/www/resources/css/;
+                          try_files $uri $uri/ =404;
+                      }
+                      location /js/ {
+                          alias /var/www/resources/js/;
+                          try_files $uri $uri/ =404;
+                      }
+                      location /media/ {
+                          alias /var/www/resources/media/;
+                          try_files $uri $uri/ =404;
+                      }
+                      location ~ ^/im-interface/.*\.php$ {
+                         fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                         fastcgi_pass im-interface-service:9000;
+                         fastcgi_index index.php;
+                         include fastcgi_params;
+                         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                         fastcgi_param PATH_INFO $fastcgi_path_info;
+                     }
+                      error_page 500 502 503 504 /50x.html;
+                      location = /50x.html {
+                          root /usr/share/nginx/html;
+                      }
+                      client_max_body_size 100M;
+                  }
+              }' > /etc/nginx/nginx.conf;
+              composer update;
+              php artisan key:generate --force;
+              php artisan migrate --force;
+              php artisan db:seed --force;
+              php-fpm & nginx -g 'daemon off;'
           env:
             - name: DB_HOST
               value: mysql-db  # Ensure it points to the right MySQL service
@@ -35,21 +78,6 @@ spec:
               value: user
             - name: DB_PASSWORD
               value: password
-      containers:
-        - name: im-interface
-          image: harbor.vgregion.se/senslab/im-interface:latest
           ports:
             - containerPort: 9000
-          env:
-            - name: DB_HOST
-              value: mysql-db  # Ensure it points to the right MySQL service
-            - name: DB_DATABASE
-              value: iim_interface
-            - name: DB_USERNAME
-              value: user
-            - name: DB_PASSWORD
-              value: password
-        - name: nginx
-          image: harbor.vgregion.se/senslab/nginx:latest
-          ports:
             - containerPort: 80
