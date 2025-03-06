@@ -22,6 +22,7 @@ spec:
             - sh
             - -c
             - |
+              git config --global --add safe.directory /var/www || exit 1;
               mkdir -p /etc/nginx || exit 1;
               chown -R www-data:www-data /var/www || exit 1;
               echo 'worker_processes 1;
