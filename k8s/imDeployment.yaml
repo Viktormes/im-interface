@@ -17,7 +17,7 @@ spec:
         - name: harbor
       initContainers:
         - name: init-setup
-          image: harbor.vgregion.se/senslab/im-interface:latest  # Use the same image as the main app container
+          image: harbor.vgregion.se/senslab/im-interface:latest
           command:
             - sh
             - -c
@@ -28,7 +28,7 @@ spec:
               php artisan db:seed --force
           env:
             - name: DB_HOST
-              value: mysql-db  # Ensure it points to the right MySQL service
+              value: mysql-db
             - name: DB_DATABASE
               value: iim_interface
             - name: DB_USERNAME
@@ -42,14 +42,29 @@ spec:
             - containerPort: 9000
           env:
             - name: DB_HOST
-              value: mysql-db  # Ensure it points to the right MySQL service
+              value: mysql-db
             - name: DB_DATABASE
               value: iim_interface
             - name: DB_USERNAME
               value: user
             - name: DB_PASSWORD
               value: password
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/www
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/www
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: app-storage
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: nginx-config
