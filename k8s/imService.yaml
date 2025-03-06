@@ -7,10 +7,12 @@ spec:
   selector:
     app: im-interface
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 80
-    - protocol: TCP
+    - name: fpm
+      protocol: TCP
       port: 9000
       targetPort: 9000
   type: ClusterIP
