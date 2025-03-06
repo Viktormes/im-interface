@@ -22,6 +22,8 @@ spec:
             - sh
             - -c
             - |
+              mkdir -p /var/log/nginx /var/log/php7.4 || exit 1;
+              chown -R www-data:www-data /var/log/nginx /var/log/php7.4 || exit 1;
               git config --global --add safe.directory /var/www || exit 1;
               mkdir -p /etc/nginx || exit 1;
               chown -R www-data:www-data /var/www || exit 1;
@@ -85,12 +87,3 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 80
-          securityContext:
-            allowPrivilegeEscalation: false
-
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
