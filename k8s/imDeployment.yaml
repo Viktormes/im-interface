@@ -15,6 +15,26 @@ spec:
     spec:
       imagePullSecrets:
         - name: harbor
+      initContainers:
+        - name: init-setup
+          image: harbor.vgregion.se/senslab/im-interface:latest
+          command:
+            - sh
+            - -c
+            - |
+              composer update
+              php artisan key:generate --force
+              php artisan migrate --force
+              php artisan db:seed --force
+          env:
+            - name: DB_HOST
+              value: mysql-db  # Ensure it points to the right MySQL service
+            - name: DB_DATABASE
+              value: iim_interface
+            - name: DB_USERNAME
+              value: user
+            - name: DB_PASSWORD
+              value: password
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
@@ -22,7 +42,13 @@ spec:
             - containerPort: 9000
           env:
             - name: DB_HOST
-              value: mysql-db
+              value: mysql-db  # Ensure it points to the right MySQL service
+            - name: DB_DATABASE
+              value: iim_interface
+            - name: DB_USERNAME
+              value: user
+            - name: DB_PASSWORD
+              value: password
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
