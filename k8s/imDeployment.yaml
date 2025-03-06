@@ -85,3 +85,12 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
