@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: nginx
   namespace: im-interface
 data:
   nginx.conf: |
@@ -42,7 +42,7 @@ data:
 
             location ~ \.php$ {
                      fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                    fastcgi_pass im-interface.im-interface.svc.cluster.local:9000;
+                    fastcgi_pass im-interface:9000;
                     fastcgi_index index.php;
                     include fastcgi_params;
                     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
