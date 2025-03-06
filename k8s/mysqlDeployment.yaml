@@ -35,5 +35,4 @@ spec:
               readOnly: true
       volumes:
         - name: mysql-init-scripts
-          configMap:
-            name: mysql-init-scripts
+
