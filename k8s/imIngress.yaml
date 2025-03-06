@@ -8,7 +8,6 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     dns-managed-by/infoblox-dns-webhook: "true"
 spec:
-  ingressClassName: nginx
   rules:
     - host: senslab-test.k8s.vgregion.se
       http:
