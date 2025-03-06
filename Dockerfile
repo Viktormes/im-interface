@@ -1,10 +1,10 @@
-# Use the official PHP image as a base image
-FROM php:8.3-fpm
+# Stage 1: Build the application with dependencies
+FROM php:8.3-fpm AS builder
 
 # Set working directory
 WORKDIR /var/www
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,23 +14,30 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    unzip && \
+    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory contents
+# Copy the application source code
 COPY . /var/www
 
-# Copy existing application directory permissions
+# Set the correct file ownership
 COPY --chown=www-data:www-data . /var/www
 
-# Expose port 9000 and start php-fpm server
+# Stage 2: Production Image (only includes the application and runtime dependencies)
+FROM php:8.3-fpm
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy only the necessary files from the builder image
+COPY --from=builder /var/www /var/www
+
+# Expose port 9000 for PHP-FPM
 EXPOSE 9000
+
+# Start PHP-FPM server
 CMD ["php-fpm"]
