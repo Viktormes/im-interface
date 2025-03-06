@@ -4,22 +4,13 @@ metadata:
   name: im-interface-ingress
   namespace: im-interface
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /im-interface
     dns-managed-by/infoblox-dns-webhook: "true"
 spec:
-  ingressClassName: nginx
   rules:
     - host: senslab-test.k8s.vgregion.se
       http:
         paths:
           - path: /im-interface
-            pathType: Prefix
-            backend:
-              service:
-                name: im-interface-service
-                port:
-                  number: 80
-          - path: /im-interface/*
             pathType: Prefix
             backend:
               service:
