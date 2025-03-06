@@ -15,26 +15,6 @@ spec:
     spec:
       imagePullSecrets:
         - name: harbor
-      initContainers:
-        - name: init-setup
-          image: harbor.vgregion.se/senslab/im-interface:latest
-          command:
-            - sh
-            - -c
-            - |
-              composer update
-              php artisan key:generate --force
-              php artisan migrate --force
-              php artisan db:seed --force
-          env:
-            - name: DB_HOST
-              value: mysql-db
-            - name: DB_DATABASE
-              value: iim_interface
-            - name: DB_USERNAME
-              value: user
-            - name: DB_PASSWORD
-              value: password
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
@@ -43,31 +23,7 @@ spec:
           env:
             - name: DB_HOST
               value: mysql-db
-            - name: DB_DATABASE
-              value: iim_interface
-            - name: DB_USERNAME
-              value: user
-            - name: DB_PASSWORD
-              value: password
-          volumeMounts:
-            - name: app-storage
-              mountPath: /var/www
         - name: nginx
           image: harbor.vgregion.se/senslab/nginx:latest
           ports:
             - containerPort: 80
-          volumeMounts:
-            - name: app-storage
-              mountPath: /var/www
-            - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf  # Mount nginx.conf directly
-              subPath: nginx.conf  # Use the exact file
-
-      volumes:
-        - name: app-storage
-          emptyDir: {}
-        - name: nginx-config
-          hostPath:
-            path: C:/Users/vikha11/im-interface/nginx.conf # Path to your nginx.conf on the node or within the volume
-            type: File
-
