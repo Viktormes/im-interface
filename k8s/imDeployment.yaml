@@ -22,7 +22,7 @@ spec:
             - sh
             - -c
             - |
-              composer install --no-interaction --prefer-dist
+              composer update
               php artisan key:generate --force
               php artisan migrate --force
               php artisan db:seed --force
@@ -60,11 +60,13 @@ spec:
             - name: app-storage
               mountPath: /var/www
             - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
+              mountPath: /etc/nginx/nginx.conf  # Mount nginx.conf directly
+              subPath: nginx.conf  # Use the exact file
+
       volumes:
         - name: app-storage
           emptyDir: {}
         - name: nginx-config
-          configMap:
-            name: nginx-config
+          hostPath:
+            path: /etc/nginx/nginx.conf  # Path to your nginx.conf on the node or within the volume
+
