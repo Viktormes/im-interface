@@ -68,5 +68,6 @@ spec:
           emptyDir: {}
         - name: nginx-config
           hostPath:
-            path: /etc/nginx/nginx.conf  # Path to your nginx.conf on the node or within the volume
+            path: C:/Users/vikha11/im-interface/nginx.conf # Path to your nginx.conf on the node or within the volume
+            type: File
 
