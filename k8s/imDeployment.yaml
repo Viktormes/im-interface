@@ -37,23 +37,28 @@ spec:
                   server {
                       listen 80;
                       server_name senslab-test.k8s.vgregion.se;
+
                       location /im-interface/ {
                           root        /var/www/public;
                           index       index.html;
                           try_files   $uri $uri/ /index.html;
                       }
+
                       location /css/ {
                           alias /var/www/resources/css/;
                           try_files $uri $uri/ =404;
                       }
+
                       location /js/ {
                           alias /var/www/resources/js/;
                           try_files $uri $uri/ =404;
                       }
+
                       location /media/ {
                           alias /var/www/resources/media/;
                           try_files $uri $uri/ =404;
                       }
+
                       location ~ ^/im-interface/.*\.php$ {
                          fastcgi_split_path_info ^(.+\.php)(/.+)$;
                          fastcgi_pass im-interface-service:9000;
@@ -62,10 +67,12 @@ spec:
                          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                          fastcgi_param PATH_INFO $fastcgi_path_info;
                      }
+
                       error_page 500 502 503 504 /50x.html;
                       location = /50x.html {
                           root /usr/share/nginx/html;
                       }
+
                       client_max_body_size 100M;
                   }
               }' > /etc/nginx/nginx.conf || exit 1;
