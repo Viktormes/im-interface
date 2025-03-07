@@ -11,8 +11,7 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 80
-    - name: fpm
+    - name: fastcgi
       protocol: TCP
       port: 9000
       targetPort: 9000
-  type: ClusterIP
