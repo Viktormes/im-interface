@@ -25,57 +25,7 @@ spec:
               mkdir -p /var/log/nginx /var/log/php7.4 || exit 1;
               chown -R www-data:www-data /var/log/nginx /var/log/php7.4 || exit 1;
               git config --global --add safe.directory /var/www || exit 1;
-              mkdir -p /etc/nginx || exit 1;
               chown -R www-data:www-data /var/www || exit 1;
-              echo 'worker_processes 1;
-              events {
-                  worker_connections 1024;
-              }
-              http {
-                  include       mime.types;
-                  default_type  application/octet-stream;
-                  server {
-                      listen 80;
-                      server_name senslab-test.k8s.vgregion.se;
-
-                      location /im-interface/ {
-                          root        /var/www/public;
-                          index       index.php;
-                          try_files   $uri $uri/ /index.php?$query_string;
-                      }
-
-                      location /css/ {
-                          alias /var/www/resources/css/;
-                          try_files $uri $uri/ =404;
-                      }
-
-                      location /js/ {
-                          alias /var/www/resources/js/;
-                          try_files $uri $uri/ =404;
-                      }
-
-                      location /media/ {
-                          alias /var/www/resources/media/;
-                          try_files $uri $uri/ =404;
-                      }
-
-                      location ~ ^/im-interface/.*\.php$ {
-                         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                         fastcgi_pass im-interface-service:9000;
-                         fastcgi_index index.php;
-                         include fastcgi_params;
-                         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                         fastcgi_param PATH_INFO $fastcgi_path_info;
-                     }
-
-                      error_page 500 502 503 504 /50x.html;
-                      location = /50x.html {
-                          root /usr/share/nginx/html;
-                      }
-
-                      client_max_body_size 100M;
-                  }
-              }' > /etc/nginx/nginx.conf || exit 1;
               composer update || exit 1;
               php artisan key:generate --force || exit 1;
               php artisan migrate --force || exit 1;
@@ -94,3 +44,11 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
