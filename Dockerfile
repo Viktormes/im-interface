@@ -36,6 +36,13 @@ FROM php:8.3-fpm
 # Set working directory
 WORKDIR /var/www
 
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+    git \
+    zip \
+    unzip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Copy only the necessary files from the builder image
 COPY --from=builder /var/www /var/www
 
