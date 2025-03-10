@@ -38,4 +38,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 
 # Start Nginx and PHP-FPM
-CMD service nginx start && php-fpm
+CMD ["sh", "-c", "service nginx start && php-fpm"]
