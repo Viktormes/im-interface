@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip && \
+    unzip \
+    nginx && \
     docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -27,11 +28,14 @@ COPY . /var/www
 # Set the correct file ownership
 COPY --chown=www-data:www-data . /var/www
 
+# Add /var/www to the list of safe directories
+RUN git config --global --add safe.directory /var/www
+
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Expose port 80 for Nginx
+EXPOSE 80
 
-# Start PHP-FPM server
-CMD ["php-fpm"]
+# Start Nginx and PHP-FPM
+CMD service nginx start && php-fpm
