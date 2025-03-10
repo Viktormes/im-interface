@@ -1,26 +1,38 @@
 #!/bin/sh
 
-# Create necessary directories and set permissions
+set -e  # Exit script on any error
+
+echo "Starting setup..."
+
+# Ensure necessary directories exist and set correct permissions
 mkdir -p /var/log/nginx /var/log/php8.3 /var/run/php
-chown -R www-data:www-data /var/log/nginx /var/log/php8.3 /var/run/php
-chown -R www-data:www-data /var/www
+chown -R www-data:www-data /var/log/nginx /var/log/php8.3 /var/run/php /var/www
 
-# Run Composer update
-composer update
+# Ensure PHP-FPM socket directory exists
+mkdir -p /var/run/php
+chown -R www-data:www-data /var/run/php
 
-# Run Laravel artisan commands
-php artisan key:generate --force
-php artisan migrate --force
-php artisan db:seed --force
-
-# Start PHP-FPM in the background and log output
-php-fpm -D
-
-# Check if PHP-FPM started successfully
-if [ $? -ne 0 ]; then
-  echo "Failed to start PHP-FPM"
-  exit 1
+# Run Laravel setup (if applicable)
+if [ -f artisan ]; then
+    echo "Running Laravel setup..."
+    php artisan key:generate --force
+    php artisan migrate --force
+    php artisan db:seed --force
+    echo "Laravel setup complete."
+else
+    echo "No Laravel setup found, skipping migrations."
 fi
 
-# Start Nginx in the foreground and log output
-nginx -g 'daemon off;'
+# Start PHP-FPM in the background
+php-fpm -D
+sleep 3
+
+if ! pgrep php-fpm > /dev/null; then
+  echo "❌ PHP-FPM failed to start!"
+  exit 1
+fi
+echo "✅ PHP-FPM started successfully."
+
+# Start Nginx in the foreground
+echo "Starting Nginx..."
+exec nginx -g 'daemon off;'

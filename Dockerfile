@@ -37,7 +37,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Create PHP-FPM configuration directory and file
 RUN mkdir -p /etc/php/8.3/fpm/pool.d && \
     echo "[www]" > /etc/php/8.3/fpm/pool.d/www.conf && \
-    echo "listen = /var/run/php/php8.3-fpm.sock" >> /etc/php/8.3/fpm/pool.d/www.conf && \
+    echo "listen = 9000" >> /etc/php/8.3/fpm/pool.d/www.conf && \
     echo "listen.owner = www-data" >> /etc/php/8.3/fpm/pool.d/www.conf && \
     echo "listen.group = www-data" >> /etc/php/8.3/fpm/pool.d/www.conf && \
     echo "listen.mode = 0660" >> /etc/php/8.3/fpm/pool.d/www.conf && \
