@@ -18,19 +18,7 @@ spec:
       containers:
         - name: im-interface
           image: harbor.vgregion.se/senslab/im-interface:latest
-          command:
-            - sh
-            - -c
-            - |
-              mkdir -p /var/log/nginx /var/log/php7.4 || exit 1;
-              chown -R www-data:www-data /var/log/nginx /var/log/php7.4 || exit 1;
-              chown -R www-data:www-data /var/www || exit 1;
-              composer update || exit 1;
-              php artisan key:generate --force || exit 1;
-              php artisan migrate --force || exit 1;
-              php artisan db:seed --force || exit 1;
-              php-fpm || exit 1;
-              nginx -g 'daemon off;' || exit 1;
+          command: ["/start.sh"]
           env:
             - name: DB_HOST
               value: mysql-db
