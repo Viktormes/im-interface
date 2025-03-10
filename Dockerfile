@@ -36,6 +36,8 @@ WORKDIR /var/www
 # Copy only the necessary files from the builder image
 COPY --from=builder /var/www /var/www
 
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
