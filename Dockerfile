@@ -1,5 +1,5 @@
-# Stage 1: Build the application with dependencies
-FROM php:8.3-fpm AS builder
+# Use the official PHP image
+FROM php:8.3-fpm
 
 # Set working directory
 WORKDIR /var/www
@@ -26,28 +26,6 @@ COPY . /var/www
 
 # Set the correct file ownership
 COPY --chown=www-data:www-data . /var/www
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Stage 2: Production Image (only includes the application and runtime dependencies)
-FROM php:8.3-fpm
-
-# Set working directory
-WORKDIR /var/www
-
-# Install system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y \
-    git \
-    zip \
-    unzip && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Copy only the necessary files from the builder image
-COPY --from=builder /var/www /var/www
-
-# Copy Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
