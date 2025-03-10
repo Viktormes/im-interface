@@ -22,6 +22,10 @@ spec:
             - sh
             - -c
             - |
+              mkdir -p /var/log/nginx /var/log/php7.4 || exit 1;
+              chown -R www-data:www-data /var/log/nginx /var/log/php7.4 || exit 1;
+              git config --global --add safe.directory /var/www || exit 1;
+              chown -R www-data:www-data /var/www || exit 1;
               composer update || exit 1;
               php artisan key:generate --force || exit 1;
               php artisan migrate --force || exit 1;
