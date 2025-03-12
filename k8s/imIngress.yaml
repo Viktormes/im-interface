@@ -11,8 +11,8 @@ spec:
     - host: senslab-test.k8s.vgregion.se
       http:
         paths:
-          - path: /im-interface
-            pathType: Prefix
+          - path: /im-interface/
+            pathType: Exact
             backend:
               service:
                 name: im-interface-service
