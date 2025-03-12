@@ -30,10 +30,3 @@ spec:
               value: password
           ports:
             - containerPort: 80
-          volumeMounts:
-            - name: app-code
-              mountPath: /var/www
-      volumes:
-        - name: app-code
-          persistentVolumeClaim:
-            claimName: app-code-pvc
