@@ -12,7 +12,7 @@ spec:
       http:
         paths:
           - path: /im-interface/
-            pathType: Exact
+            pathType: Prefix
             backend:
               service:
                 name: im-interface-service
